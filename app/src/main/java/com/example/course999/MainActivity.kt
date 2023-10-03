@@ -1,70 +1,88 @@
 package com.example.course999
 
 import android.os.Bundle
-import android.os.CountDownTimer
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import java.util.Timer
-import java.util.TimerTask
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity {
+
+    constructor() : super() {
+        Log.d("nilsolk", "called from MainActivity constructor")
+    }
+
+    private val list = mutableListOf<Any>()
+    private var bundleCounter = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("nilsolk", "called from Main Activity OnCreate")
         setContentView(R.layout.activity_main)
-        Log.d("currentThread", "${Thread.currentThread()}")
 
+        val textViewBundle = findViewById<TextView>(R.id.textViewBundle)
+        bundleCounter = savedInstanceState?.getInt("myValue") ?: 0
+        textViewBundle.text = bundleCounter.toString()
+
+        findViewById<Button>(R.id.bundle_save_button).setOnClickListener {
+            textViewBundle.text = (++bundleCounter).toString()
+        }
+
+
+
+
+        Log.d("nilsolk", "called from Main Activity OnCreate")
+        findViewById<Button>(R.id.large_heap_button).setOnClickListener {
+            while (true) {
+                list.add(A())
+            }
+        }
 
         val textView = findViewById<TextView>(R.id.textView)
-        val button = findViewById<Button>(R.id.button)
-        val buttonTimer = findViewById<Button>(R.id.buttonTimer)
+        val counter = (application as App).counter
 
-        var counter = 0L
+        textView.text = counter.toString()
 
-        textView.setOnClickListener {
-            Thread {
-                val handler = Handler(Looper.getMainLooper())
-                handler.postDelayed({
-                    textView.text = "Getting from post method"
-                    Toast.makeText(this, "Delayed on ${DELAY / 1000} sec", Toast.LENGTH_SHORT)
-                        .show()
-                }, DELAY)
-            }.start()
-        }
-
-        button.setOnClickListener {
-            object : CountDownTimer(10000, 1000) {
-                override fun onTick(millisUntilFinished: Long) {
-                    textView.text = (millisUntilFinished / 1000).toString()
-                }
-
-                override fun onFinish() {
-                    textView.append("\nfinished")
-                }
-
-            }.start()
-        }
-
-        buttonTimer.setOnClickListener {
-            Thread.sleep(10_000)
-            Timer().scheduleAtFixedRate(object : TimerTask() {
-                override fun run() = runOnUiThread {
-                    textView.text = counter++.toString()
-                }
-            }, 0, 1000)
-
+        findViewById<Button>(R.id.save_w_app_button).setOnClickListener {
+            textView.text = (++(application as App).counter).toString()
         }
 
     }
 
-
-    companion object {
-        private const val DELAY = 2000L
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d("nilsolk", "data had save")
+        outState.putInt("myValue", bundleCounter)
     }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("nilsolk", "called from Main Activity OnStart")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("nilsolk", "called from Main Activity OnResume()")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("nilsolk", "called from Main Activity onPause()")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("nilsolk", "called from Main Activity onStop()")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("nilsolk", "called from Main Activity onDestroy()")
+    }
+
 }
+
+data class A(
+    private val l: Long = System.currentTimeMillis(),
+    private val b: Long = System.currentTimeMillis()
+)
