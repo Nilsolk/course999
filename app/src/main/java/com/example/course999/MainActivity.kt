@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity {
         Log.d("nilsolk", "called from Main Activity OnCreate")
         setContentView(R.layout.activity_main)
 
+        (application as App).activityCreated(savedInstanceState == null)
+
         val textViewBundle = findViewById<TextView>(R.id.textViewBundle)
         bundleCounter = savedInstanceState?.getInt("myValue") ?: 0
         textViewBundle.text = bundleCounter.toString()
@@ -27,8 +29,6 @@ class MainActivity : AppCompatActivity {
         findViewById<Button>(R.id.bundle_save_button).setOnClickListener {
             textViewBundle.text = (++bundleCounter).toString()
         }
-
-
 
 
         Log.d("nilsolk", "called from Main Activity OnCreate")
