@@ -8,7 +8,7 @@ class App() : Application() {
     private val handleDeath = HandleDeath.Base()
     override fun onCreate() {
         super.onCreate()
-        mainRepresentative = MainRepresentative.Base()
+        mainRepresentative = MainRepresentative.Base(UiObservable.Base())
 
     }
 

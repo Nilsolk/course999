@@ -3,36 +3,31 @@ package com.example.course999
 interface MainRepresentative {
 
     fun startAsync()
-    fun startGettingUpdates(callback: ActivityCallback)
+    fun startGettingUpdates(callback: UiObserver<Int>)
     fun stopGettingUpdates()
+    fun saveState()
 
-    class Base : MainRepresentative {
+    class Base(private val observable: UiObservable<Int>) : MainRepresentative {
 
-        private var callback: ActivityCallback = ActivityCallback.Empty()
-        private var needToPing = false
 
-        private val thread = Thread {
+        private fun thread() = Thread {
             Thread.sleep(5000)
-            if (callback.isEmpty()) {
-                needToPing = false
-            } else {
-                callback.updateUi()
-            }
+            observable.update(R.string.callback_from_ui_text)
         }
 
         override fun startAsync() {
-            thread.start()
+            thread().start()
         }
 
-        override fun startGettingUpdates(callback: ActivityCallback) {
-            if (needToPing) {
-                callback.updateUi()
-                needToPing = false
-            } else this.callback = callback
-        }
+        override fun startGettingUpdates(callback: UiObserver<Int>) =
+            observable.updateObserver(callback)
 
-        override fun stopGettingUpdates() {
-            this.callback = ActivityCallback.Empty()
+
+        override fun stopGettingUpdates() = observable.updateObserver()
+
+
+        override fun saveState() {
+            TODO("Not yet implemented")
         }
 
     }
