@@ -4,17 +4,11 @@ import android.app.Application
 import android.util.Log
 
 class App() : Application() {
-    init {
-        Log.d("nilsolk", "called from constructor")
-    }
-
+    lateinit var mainRepresentative: MainRepresentative
     private val handleDeath = HandleDeath.Base()
-
-    var counter = 0
-
     override fun onCreate() {
         super.onCreate()
-        Log.d("nilsolk", "called from onCreate()")
+        mainRepresentative = MainRepresentative.Base()
 
     }
 

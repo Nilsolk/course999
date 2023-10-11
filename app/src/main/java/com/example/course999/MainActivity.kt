@@ -1,88 +1,63 @@
 package com.example.course999
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : AppCompatActivity {
+class MainActivity : AppCompatActivity() {
+    private lateinit var textView: TextView
+    private lateinit var representative: MainRepresentative
 
-    constructor() : super() {
-        Log.d("nilsolk", "called from MainActivity constructor")
+
+    private val activityCallback = object : ActivityCallback {
+        override fun updateUi() =
+            runOnUiThread {
+                textView.setText(R.string.callback_from_ui_text)
+            }
+
+        override fun isEmpty(): Boolean = false
+
     }
-
-    private val list = mutableListOf<Any>()
-    private var bundleCounter = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("nilsolk", "called from Main Activity OnCreate")
         setContentView(R.layout.activity_main)
+        representative = (application as App).mainRepresentative
 
-        (application as App).activityCreated(savedInstanceState == null)
+        val button = findViewById<Button>(R.id.save_w_app_button)
 
-        val textViewBundle = findViewById<TextView>(R.id.textViewBundle)
-        bundleCounter = savedInstanceState?.getInt("myValue") ?: 0
-        textViewBundle.text = bundleCounter.toString()
-
-        findViewById<Button>(R.id.bundle_save_button).setOnClickListener {
-            textViewBundle.text = (++bundleCounter).toString()
+        button.setOnClickListener {
+            representative.startAsync()
         }
-
-
-        Log.d("nilsolk", "called from Main Activity OnCreate")
-        findViewById<Button>(R.id.large_heap_button).setOnClickListener {
-            while (true) {
-                list.add(A())
-            }
-        }
-
-        val textView = findViewById<TextView>(R.id.textView)
-        val counter = (application as App).counter
-
-        textView.text = counter.toString()
-
-        findViewById<Button>(R.id.save_w_app_button).setOnClickListener {
-            textView.text = (++(application as App).counter).toString()
-        }
-
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        Log.d("nilsolk", "data had save")
-        outState.putInt("myValue", bundleCounter)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d("nilsolk", "called from Main Activity OnStart")
     }
 
     override fun onResume() {
         super.onResume()
-        Log.d("nilsolk", "called from Main Activity OnResume()")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d("nilsolk", "called from Main Activity onPause()")
+        textView = findViewById(R.id.textView)
+        representative.startGettingUpdates(activityCallback)
     }
 
     override fun onStop() {
         super.onStop()
-        Log.d("nilsolk", "called from Main Activity onStop()")
+        representative.stopGettingUpdates()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("nilsolk", "called from Main Activity onDestroy()")
+    private val thread = Thread {
+        Thread.sleep(3000)
+        runOnUiThread {
+
+        }
     }
 
 }
 
-data class A(
-    private val l: Long = System.currentTimeMillis(),
-    private val b: Long = System.currentTimeMillis()
-)
+interface ActivityCallback {
+    fun updateUi()
+    fun isEmpty(): Boolean
+    class Empty : ActivityCallback {
+        override fun updateUi() = Unit
+        override fun isEmpty(): Boolean = true
+    }
+}
+

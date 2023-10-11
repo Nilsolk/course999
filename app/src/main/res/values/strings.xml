@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">course999</string>
     <string name="start_text">Hello world!</string>
-    <string name="test_heap">test heap</string>
+    <string name="start_callback">Click</string>
     <string name="saved_by_app">saved by app</string>
     <string name="saved_by_bundle">saved by bundle</string>
+    <string name="callback_from_ui_text">Test callback</string>
 </resources>
