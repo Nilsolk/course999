@@ -1,16 +1,24 @@
 package com.example.course999
 
+import androidx.annotation.MainThread
+
 interface UiObservable<T : Any> : UiUpdate<T> {
 
     fun updateObserver(uiObserver: UiObserver<T> = UiObserver.Empty())
 
+    /**
+     * No need to use
+     */
     class Base<T : Any> : UiObservable<T> {
 
+        @Volatile
         private var cache: T? = null
 
+        @Volatile
         private var observer: UiObserver<T> = UiObserver.Empty()
 
-        override fun updateObserver(uiObserver: UiObserver<T>) {
+        @MainThread
+        override fun updateObserver(uiObserver: UiObserver<T>) = synchronized(Single::class.java) {
             observer = uiObserver
             if (!observer.isEmpty()) {
                 cache?.let {
@@ -19,10 +27,12 @@ interface UiObservable<T : Any> : UiUpdate<T> {
             }
         }
 
+        /**
+         * Called bt Model
+         */
         override fun update(data: T) {
-            if (observer.isEmpty()) {
-                cache = data
-            } else {
+            cache = data
+            if (!observer.isEmpty()) {
                 cache = data
                 observer.update(data)
             }
@@ -71,7 +81,7 @@ interface UiObserver<T : Any> : UiUpdate<T> {
 
     class Empty<T : Any> : UiObserver<T> {
         override fun update(data: T) = Unit
-        override fun isEmpty(): Boolean = false
+        override fun isEmpty(): Boolean = true
 
     }
 }

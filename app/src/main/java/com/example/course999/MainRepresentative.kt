@@ -1,5 +1,8 @@
 package com.example.course999
 
+import androidx.annotation.MainThread
+
+@MainThread
 interface MainRepresentative {
 
     fun startAsync()
