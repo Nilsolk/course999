@@ -1,14 +1,16 @@
-package com.example.course999
+package com.example.course999.main
 
 import androidx.annotation.MainThread
+import com.example.course999.R
+import com.example.course999.core.UiObservable
+import com.example.course999.core.UiObserver
 
 @MainThread
 interface MainRepresentative {
 
-    fun startAsync()
+    fun showDashboard(firstTime: Boolean)
     fun startGettingUpdates(callback: UiObserver<Int>)
     fun stopGettingUpdates()
-    fun saveState()
 
     class Base(private val observable: UiObservable<Int>) : MainRepresentative {
 
@@ -18,8 +20,8 @@ interface MainRepresentative {
             observable.update(R.string.callback_from_ui_text)
         }
 
-        override fun startAsync() {
-            thread().start()
+        override fun showDashboard(firstTime: Boolean) {
+            if(firstTime) observable.update()
         }
 
         override fun startGettingUpdates(callback: UiObserver<Int>) =
@@ -28,10 +30,6 @@ interface MainRepresentative {
 
         override fun stopGettingUpdates() = observable.updateObserver()
 
-
-        override fun saveState() {
-            TODO("Not yet implemented")
-        }
 
     }
 

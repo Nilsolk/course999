@@ -1,9 +1,10 @@
-package com.example.course999
+package com.example.course999.main
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.course999.R
+import com.example.course999.core.App
+import com.example.course999.core.UiObserver
 
 class MainActivity : AppCompatActivity() {
     private lateinit var representative: MainRepresentative
@@ -15,18 +16,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         representative = (application as App).mainRepresentative
 
-        val textView = findViewById<TextView>(R.id.textView)
-        val button = findViewById<Button>(R.id.save_w_app_button)
-
         activityCallback = object : ActivityCallback {
-            override fun update(data: Int) = runOnUiThread {
-                textView.setText(data)
+            override fun update(data: Int) {
+
             }
         }
-
-        button.setOnClickListener {
-            representative.startAsync()
-        }
+        representative.showDashboard(savedInstanceState == null)
     }
 
     override fun onResume() {

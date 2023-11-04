@@ -1,7 +1,8 @@
-package com.example.course999
+package com.example.course999.core
 
 import android.app.Application
 import android.util.Log
+import com.example.course999.main.MainRepresentative
 
 class App() : Application() {
     lateinit var mainRepresentative: MainRepresentative
@@ -9,7 +10,6 @@ class App() : Application() {
     override fun onCreate() {
         super.onCreate()
         mainRepresentative = MainRepresentative.Base(UiObservable.Single())
-
     }
 
     fun activityCreated(firstOpening: Boolean) {
